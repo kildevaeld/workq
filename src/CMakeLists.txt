@@ -5,7 +5,7 @@ set(SOURCES
 )
 
 add_library(workq++ ${SOURCES})
-target_link_libraries(workq++ thpool)
+target_link_libraries(workq++ pthread)
 target_include_directories(workq++ PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 if (WORKQ_DEBUG)
