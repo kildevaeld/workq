@@ -75,10 +75,11 @@ void WorkQueuePrivate::dispatch_handler() {
       hook(TaskState::Started, task, Stats{queue.size(), running});
     running++;
     task->run();
+    running--;
     if (hook)
       hook(TaskState::Done, task, Stats{queue.size(), running});
     delete task;
-    running--;
+
     condition.notify_one();
     lock.lock();
   }
@@ -106,7 +107,6 @@ WorkQueue &WorkQueue::operator=(WorkQueue &&other) {
   if (this != &other) {
     d.swap(other.d);
   }
-
   return *this;
 }
 
@@ -144,20 +144,16 @@ void WorkQueue::wait() const {
   std::unique_lock<std::mutex> lock(d->mutex);
 
   d->condition.wait(lock, [this] {
-    DEBUG("%s WAIT q:%lu r:%lu", d->name.c_str(), d->queue.size(),
-          d->running.load());
     auto ret =
         d->state == State::Running && d->queue.size() == 0 && d->running == 0;
     if (!ret)
       d->condition.notify_one();
     return ret;
   });
-  DEBUG("%s WAIT", d->name.c_str());
 }
 
 size_t WorkQueue::size() const { return d->queue.size(); }
 size_t WorkQueue::capacity() const { return d->capacity; }
-
 size_t WorkQueue::running() const { return d->running; }
 
 } // namespace workq
