@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libworkq++.a  CMakeFiles/workq++.dir/queue.cpp.o CMakeFiles/workq++.dir/work-queue.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libworkq++.a
