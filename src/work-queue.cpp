@@ -80,7 +80,7 @@ void WorkQueuePrivate::dispatch_handler() {
       hook(TaskState::Done, task, Stats{queue.size(), running});
     delete task;
 
-    condition.notify_one();
+    condition.notify_all();
     lock.lock();
   }
 }
@@ -116,7 +116,7 @@ WorkQueue &WorkQueue::dispatch(GenericTask *task) {
   d->queue.push(task);
   if (d->hook)
     d->hook(TaskState::Added, task, Stats{d->queue.size(), d->running});
-  d->condition.notify_one();
+  d->condition.notify_all();
   return *this;
 }
 
@@ -147,7 +147,7 @@ void WorkQueue::wait() const {
     auto ret =
         d->state == State::Running && d->queue.size() == 0 && d->running == 0;
     if (!ret)
-      d->condition.notify_one();
+      d->condition.notify_all();
     return ret;
   });
 }

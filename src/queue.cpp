@@ -27,6 +27,8 @@ Queue::~Queue() {}
 
 GenericTask *Queue::pop() {
   std::lock_guard<std::mutex> lock(d->mutex);
+  if (d->tasks.size() == 0)
+    return nullptr;
   auto task = d->tasks.front();
   d->tasks.pop();
   return task;
